@@ -60,7 +60,7 @@ variable "disk_image_id" {
 }
 
 variable "disk_type" {
-  default     = SSD
+  default     = "SSD"
   type        = string
   description = "(Optional) Type of the disk that is being created"
 }
