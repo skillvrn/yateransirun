@@ -26,6 +26,6 @@ resource "yandex_compute_instance" "vm" {
   }
 
   metadata = {
-    user-data   = "${file("meta.yml")}"
+    user-data   = "${file("meta.yaml")}"
   }
 }
