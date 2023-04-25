@@ -27,9 +27,3 @@ variable "zone" {
   }
   nullable    = false
 }
-
-variable "disk_image_id" {
-  default     = "f2emjomb63oc6ddm7lqt"
-  type        = string
-  description = "Disk image ID for instance: ubuntu-20-04-lts-v20230424"
-}

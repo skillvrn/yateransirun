@@ -54,7 +54,7 @@ variable "resources_memory" {
 }
 
 variable "disk_type" {
-  default     = "SSD"
+  default     = "network-ssd"
   type        = string
   description = "(Optional) Type of the disk that is being created"
 }
