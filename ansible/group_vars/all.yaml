@@ -1,0 +1,4 @@
+---
+default_container_name: runner
+default_container_image: alpine:latest
+default_container_command: sleep 1d
