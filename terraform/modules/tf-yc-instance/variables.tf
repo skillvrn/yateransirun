@@ -59,6 +59,12 @@ variable "disk_image_id" {
   description = "(Optional) A disk image to initialize this disk from"
 }
 
+variable "disk_type" {
+  default     = SSD
+  type        = string
+  description = "(Optional) Type of the disk that is being created"
+}
+
 variable "disk_size" {
   default     = 50
   type        = string
