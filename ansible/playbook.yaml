@@ -1,0 +1,5 @@
+---
+- name: Play for start and register gitlab runners
+  hosts: runners
+  roles:
+    - runners
