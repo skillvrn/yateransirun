@@ -1,4 +1,42 @@
 ---
-default_container_name: runner
-default_container_image: alpine:latest
-default_container_command: sleep 1d
+# path on docker host where to mount the image's /etc/gitlab-runner volume
+data_volume: /data/gitlab-runner
+
+# the name of the runner as displayed in gitlab server
+runner_name: gitlub-runner
+
+# the URL of the CI server (GitLab)
+gitlab_url: ""
+
+# registration token provided by the gitlab server
+registration_token: ""
+
+# the tag of the GitLab runner docker image to be run, see https://hub.docker.com/r/gitlab/gitlab-runner/tags/
+image_tag: alpine-v15.11.0
+
+# limits how many jobs globally can be run concurrently. The most upper limit of jobs using all defined runners. 0 does not mean unlimited
+concurrent: 10
+
+# limit how many jobs can be handled concurrently by this token. 0 simply means don't limit
+limit: 0
+
+# limit number of concurrent requests for new jobs from GitLab
+request_concurrency: 10
+
+# comma seperated list of tags used by gitlab-ci jobs to select an appropriate runnner
+runner_tags: std40
+
+# by default the runner triggered to run untagged jobs
+run_untagged: true
+
+# by default the runner shall not be locked to a particular project
+locked_to_project: false
+
+# the default docker image to use when not specified in .gitlab-ci.yml
+default_image: alpine-v15.11.0
+
+# whether existing runners should be first unregistered from any gitlab instance/project
+unregister_all: true
+
+# expose Prometheus metrics on the listen address and the /metrics path. Setting an empty string or leaving default value will disable the /metrics endpoint. See https://docs.gitlab.com/runner/monitoring/
+metrics_listen_address: ""
