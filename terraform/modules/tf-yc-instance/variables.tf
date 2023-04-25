@@ -54,7 +54,7 @@ variable "resources_memory" {
 }
 
 variable "disk_image_id" {
-  default     = "f2emjomb63oc6ddm7lqt"
+  default     = "fd8gfg42q4551cvt340b"
   type        = string
   description = "(Optional) A disk image to initialize this disk from"
 }
