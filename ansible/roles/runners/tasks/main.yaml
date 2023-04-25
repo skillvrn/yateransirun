@@ -1,0 +1,111 @@
+---
+
+- name: Check required var registration_token is set
+  fail:
+    msg: "registration_token var is not set"
+  when: registration_token | length == 0
+
+- name: Check required var gitlab_url is set
+  fail:
+    msg: "gitlab_url var is not set"
+  when: gitlab_url | length == 0
+
+- name: Update linux repo tree
+  apt:
+    upgrade: yes
+    update_cache: yes
+
+- name: Install required system packages
+  apt:
+    pkg:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+      - python3-pip
+      - virtualenv
+      - python3-setuptools
+    state: latest
+    update_cache: true
+
+- name: Add Docker GPG apt Key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Add Docker Repository
+  apt_repository:
+    repo: deb https://download.docker.com/linux/ubuntu jammy stable
+    state: present
+
+- name: Update apt and install docker-ce
+  apt:
+    name: docker-ce
+    state: latest
+    update_cache: true
+
+- name: Install Docker Module for Python
+  pip:
+    name: docker
+    state: latest
+
+- name: init vars
+  set_fact:  
+    command: "{{ (metrics_listen_address | length > 0) | ternary(command_base + ' --listen-address ' + metrics_listen_address, command_base) }}"
+    published_ports: "{{ (metrics_listen_address | length > 0)  | ternary([metrics_listen_port + ':' + metrics_listen_port], []) }}"
+
+- name: run GitLab CI runner container
+  docker_container:
+    name: {{ runner_name }}
+    image: gitlab/gitlab-runner:{{ image_tag }}
+    state: started
+    recreate: yes
+    detach: yes
+    restart_policy: always
+    published_ports: "{{ published_ports }}"
+    volumes:
+      - "{{ data_volume }}:/etc/gitlab-runner"
+      - /var/run/docker.sock:/var/run/docker.sock
+    log_driver: json-file
+    log_options:
+      max-size: "10m"
+      max-file: "3"
+
+- name: Unregister any existing runner
+  shell: docker exec -t {{ runner_name }} gitlab-runner unregister --all-runners
+  when: unregister_all
+
+- name: Register the runner with GitLab
+  shell: >
+    docker exec --tty
+    {{ runner_name }}
+    gitlab-runner register
+    --non-interactive
+    --url={{ gitlab_url }}
+    --registration-token={{ registration_token }}
+    --executor=docker
+    --docker-image={{ default_image }}
+    --name={{ runner_name }}
+    --limit={{ limit }}
+    --request-concurrency={{ request_concurrency }}
+    --tag-list={{ runner_tags }}
+    --locked={{ locked_to_project}}
+    --run-untagged={{ run_untagged }}
+    --docker-privileged
+    --docker-disable-cache=false
+    --docker-volumes=/var/run/docker.sock:/var/run/docker.sock
+
+- name: Set concurrency parameter in gitlab-runner's config.toml
+  lineinfile:
+    path: "{{data_volume}}/config.toml"
+    regexp: "^concurrent ="
+    line: "concurrent = {{ concurrent }}"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: List registered runners
+  shell: docker exec -t {{ runner_name }} gitlab-runner list
+  register: output
+
+- debug: msg={{ output.stdout_lines }}
