@@ -19,7 +19,7 @@ resource "yandex_compute_instance" "vm" {
 
   boot_disk {
     initialize_params {
-      image_id  = "${data.yandex_compute_image.my_image.id}"
+      image_id  = "ubuntu-2004-lts"
       type      = var.disk_type
       size      = var.disk_size
     }
