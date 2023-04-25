@@ -1,3 +1,7 @@
+data "yandex_compute_image" "my_image" {
+  family = "ubuntu-2004-lts"
+}
+
 resource "yandex_compute_instance" "vm" {
   count         = length(var.vm_suffixes)
   name          = "${var.instance_name}-${element(var.vm_suffixes, count.index)}"
@@ -15,7 +19,7 @@ resource "yandex_compute_instance" "vm" {
 
   boot_disk {
     initialize_params {
-      image_id  = var.disk_image_id
+      image_id  = "${data.yandex_compute_image.my_image.id}"
       type      = var.disk_type
       size      = var.disk_size
     }

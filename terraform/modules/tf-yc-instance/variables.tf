@@ -53,12 +53,6 @@ variable "resources_memory" {
   nullable    = false
 }
 
-variable "disk_image_id" {
-  default     = "fd8gfg42q4551cvt340b"
-  type        = string
-  description = "(Optional) A disk image to initialize this disk from"
-}
-
 variable "disk_type" {
   default     = "SSD"
   type        = string
