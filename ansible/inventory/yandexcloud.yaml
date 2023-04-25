@@ -1,0 +1,11 @@
+---
+all:
+  children:
+    runners:
+      hosts:
+        51.250.70.156:
+        158.160.33.140:
+        158.160.53.174:
+        51.250.78.84:
+  vars:
+    ansible_connection: ssh
